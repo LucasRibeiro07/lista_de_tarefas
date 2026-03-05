@@ -1,1 +1,1 @@
-web: python app/main.py
+web: pip install -r requirements.txt && python app/main.py
