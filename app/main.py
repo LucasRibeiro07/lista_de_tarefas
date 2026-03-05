@@ -588,13 +588,13 @@ def settings():
         # Atualizar senha se fornecida
         nova_senha = request.form.get('nova_senha')
         if nova_senha:
-            current_user.set_senha(nova_senha)
+            current_user.senha = generate_password_hash(nova_senha)
         
         # Atualizar configurações de tema
-        current_user.modo_escuro = 'modo_escuro' in request.form
+        current_user.tema_escuro = 'modo_escuro' in request.form
         
         # Atualizar cor do avatar
-        current_user.avatar_cor = request.form.get('avatar_cor', '#6366f1')
+        current_user.avatar_color = request.form.get('avatar_cor', '#6366f1')
         
         # Atualizar emoji do avatar
         current_user.avatar_emoji = request.form.get('avatar_emoji', '👤')
