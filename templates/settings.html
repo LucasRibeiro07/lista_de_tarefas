@@ -121,16 +121,12 @@
                                 </div>
                                 
                                 <!-- Cor Personalizada -->
-                                <label class="form-label small">Ou escolha uma cor personalizada</label>
+                                <label class="form-label small">Escolha uma cor</label>
                                 <div class="d-flex align-items-center gap-2">
                                     <input type="color" class="form-control form-control-color" id="cor_tema_personalizada" 
-                                           value="{{ current_user.tema_cor_principal or '#6366f1' }}" 
-                                           style="width: 60px; height: 40px; cursor: pointer;"
-                                           onchange="document.getElementById('tema_cor_input').value = this.value; document.getElementById('tema_cor_input').value = this.value;">
-                                    <input type="text" class="form-control" id="cor_tema_texto" 
-                                           value="{{ current_user.tema_cor_principal or '#6366f1' }}"
-                                           style="width: 100px;" readonly>
-                                    <input type="hidden" name="tema_cor_principal" id="tema_cor_input" value="{{ current_user.tema_cor_principal or '#6366f1' }}">
+                                           name="tema_cor_principal" 
+                                           value="{% if current_user.tema_cor_principal %}{{ current_user.tema_cor_principal }}{% else %}#6366f1{% endif %}" 
+                                           style="width: 60px; height: 40px; cursor: pointer;">
                                 </div>
                             </div>
                             
@@ -164,28 +160,12 @@
                                 </div>
                                 
                                 <!-- Cor do Avatar -->
-                                <label class="form-label small">Cor do Avatar (Gradiente)</label>
-                                <div class="color-selector mb-2">
-                                    {% set cores_avatar = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6', '#f97316', '#84cc16'] %}
-                                    {% for cor in cores_avatar %}
-                                    <label class="color-option">
-                                        <input type="radio" name="avatar_color" value="{{ cor }}" {% if current_user.avatar_color == cor %}checked{% endif %} onclick="document.getElementById('avatar_cor_input').value = this.value;">
-                                        <span class="color-display" style="background-color: {{ cor }}"></span>
-                                    </label>
-                                    {% endfor %}
-                                </div>
-                                
-                                <!-- Cor Personalizada do Avatar -->
-                                <label class="form-label small">Ou escolha uma cor personalizada</label>
-                                <div class="d-flex align-items-center gap-2">
+                                <label class="form-label small">Cor do Avatar</label>
+                                <div class="mb-2">
                                     <input type="color" class="form-control form-control-color" id="cor_avatar_personalizada" 
-                                           value="{{ current_user.avatar_color or '#6366f1' }}" 
-                                           style="width: 60px; height: 40px; cursor: pointer;"
-                                           onchange="document.getElementById('avatar_cor_input').value = this.value;">
-                                    <input type="text" class="form-control" id="cor_avatar_texto" 
-                                           value="{{ current_user.avatar_color or '#6366f1' }}"
-                                           style="width: 100px;" readonly>
-                                    <input type="hidden" name="avatar_color" id="avatar_cor_input" value="{{ current_user.avatar_color or '#6366f1' }}">
+                                           name="avatar_color" 
+                                           value="{% if current_user.avatar_color %}{{ current_user.avatar_color }}{% else %}#6366f1{% endif %}" 
+                                           style="width: 60px; height: 40px; cursor: pointer;">
                                 </div>
                             </div>
                         </div>
