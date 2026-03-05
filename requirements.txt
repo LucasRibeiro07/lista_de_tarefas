@@ -6,8 +6,11 @@ Flask==3.0.0
 Flask-SQLAlchemy==3.1.1
 Flask-Login==0.6.3
 
-# Banco de Dados - SQLAlchemy 2.1+ suporta Python 3.14
+# Banco de Dados
 SQLAlchemy==2.0.40
+
+# PostgreSQL (para produção no Render)
+psycopg2-binary==2.9.9
 
 # Segurança
 Werkzeug==3.0.1

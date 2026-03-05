@@ -24,11 +24,19 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'sua-chave-secreta-aqui-
 
 # Configurar o caminho do banco de dados
 import os
-db_path = os.environ.get('DATABASE_PATH')
-if db_path:
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_path
+
+# No Render, use a variável DATABASE_URL se disponível (PostgreSQL)
+# Caso contrário, use SQLite local
+database_url = os.environ.get('DATABASE_URL')
+
+if database_url:
+    # Render fornece PostgreSQL - usar ele!
+    # Substituir postgres:// por postgresql:// para SQLAlchemy
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 else:
-    # Para desenvolvimento local
+    # Desenvolvimento local - usar SQLite
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     instance_dir = os.path.join(base_dir, 'instance')
     os.makedirs(instance_dir, exist_ok=True)
