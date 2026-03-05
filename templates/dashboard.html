@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - To-Do Pro{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Cabeçalho do Dashboard -->
+    <div class="dashboard-header">
+        <div>
+            <h1 class="dashboard-title">
+                <span class="avatar-circle-lg me-2" style="background-color: {{ current_user.avatar_color }}">
+                    {{ current_user.username[0].upper() }}
+                </span>
+                Olá, {{ current_user.nome_completo or current_user.username }}! 👋
+            </h1>
+            <p class="dashboard-subtitle">Aqui está o resumo das suas tarefas</p>
+        </div>
+        <a href="{{ url_for('nova_tarefa') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus me-2"></i>Nova Tarefa
+        </a>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card stat-card-primary">
+                <div class="stat-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ tarefas_total }}</h3>
+                    <p>Total de Tarefas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-warning">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ tarefas_pendentes }}</h3>
+                    <p>Pendentes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-info">
+                <div class="stat-icon">
+                    <i class="fas fa-spinner"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ tarefas_em_andamento }}</h3>
+                    <p>Em Andamento</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-success">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ tarefas_concluidas }}</h3>
+                    <p>Concluídas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas de Tarefas Atrasadas -->
+    {% if tarefas_atrasadas %}
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <h5><i class="fas fa-exclamation-triangle me-2"></i>Você tem {{ tarefas_atrasadas|length }} tarefa(s) atrasada(s)!</h5>
+        <ul class="mb-0 mt-2">
+            {% for tarefa in tarefas_atrasadas[:3] %}
+            <li><strong>{{ tarefa.titulo }}</strong> - Atrasada há {{ tarefa.tempo_restante.dias }} dias</li>
+            {% endfor %}
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+        <!-- Tarefas Próximas do Prazo -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bell text-warning me-2"></i>Próximas do Prazo
+                    </h5>
+                    <a href="{{ url_for('listar_tarefas') }}" class="btn btn-sm btn-outline-primary">Ver todas</a>
+                </div>
+                <div class="card-body">
+                    {% if tarefas_proximas %}
+                    <div class="task-list">
+                        {% for tarefa in tarefas_proximas %}
+                        <div class="task-item task-item-{{ tarefa.prioridade }}">
+                            <div class="task-check">
+                                <a href="{{ url_for('concluir_tarefa', id=tarefa.id) }}" class="btn btn-sm btn-outline-success">
+                                    <i class="far fa-circle"></i>
+                                </a>
+                            </div>
+                            <div class="task-content">
+                                <h6 class="mb-1">{{ tarefa.titulo }}</h6>
+                                <small class="text-muted">
+                                    {% if tarefa.pasta %}
+                                    <span class="me-2"><i class="fas fa-folder" style="color: {{ tarefa.pasta.cor }}"></i> {{ tarefa.pasta.nome }}</span>
+                                    {% endif %}
+                                    <span class="deadline-badge {% if tarefa.tempo_restante.atrasada %}badge-danger{% else %}badge-warning{% endif %}">
+                                        <i class="fas fa-clock me-1"></i>
+                                        {% if tarefa.tempo_restante.atrasada %}
+                                        Atrasada!
+                                        {% elif tarefa.tempo_restante.dias > 0 %}
+                                        {{ tarefa.tempo_restante.dias }}d {{ tarefa.tempo_restante.horas }}h
+                                        {% else %}
+                                        {{ tarefa.tempo_restante.horas }}h {{ tarefa.tempo_restante.minutos }}m
+                                        {% endif %}
+                                    </span>
+                                </small>
+                            </div>
+                            <div class="task-actions">
+                                <a href="{{ url_for('editar_tarefa', id=tarefa.id) }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+                        <p>Nenhuma tarefa próxima do prazo! 🎉</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarefas Recentes -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history text-info me-2"></i>Tarefas Recentes
+                    </h5>
+                    <a href="{{ url_for('listar_tarefas') }}" class="btn btn-sm btn-outline-primary">Ver todas</a>
+                </div>
+                <div class="card-body">
+                    {% if tarefas_recentes %}
+                    <div class="task-list">
+                        {% for tarefa in tarefas_recentes %}
+                        <div class="task-item task-item-{{ tarefa.prioridade }}">
+                            <div class="task-check">
+                                {% if tarefa.status == 'concluida' %}
+                                <a href="{{ url_for('reativar_tarefa', id=tarefa.id) }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                {% else %}
+                                <a href="{{ url_for('concluir_tarefa', id=tarefa.id) }}" class="btn btn-sm btn-outline-success">
+                                    <i class="far fa-circle"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                            <div class="task-content">
+                                <h6 class="mb-1 {% if tarefa.status == 'concluida' %}text-decoration-line-through text-muted{% endif %}">
+                                    {{ tarefa.titulo }}
+                                </h6>
+                                <small class="text-muted">
+                                    <span class="badge bg-{{ 'success' if tarefa.status == 'concluida' else 'secondary' }}">
+                                        {{ tarefa.status.replace('_', ' ').title() }}
+                                    </span>
+                                    <span class="ms-2">{{ tarefa.data_criacao.strftime('%d/%m/%Y') }}</span>
+                                </small>
+                            </div>
+                            <div class="task-actions">
+                                <a href="{{ url_for('editar_tarefa', id=tarefa.id) }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                        <p>Nenhuma tarefa ainda. Crie sua primeira tarefa!</p>
+                        <a href="{{ url_for('nova_tarefa') }}" class="btn btn-primary">Criar Tarefa</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pastas -->
+    <div class="row g-4 mt-2">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-folder text-primary me-2"></i>Suas Pastas
+                    </h5>
+                    <a href="{{ url_for('nova_pasta') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus me-1"></i>Nova Pasta
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for pasta in pastas %}
+                        <div class="col-md-4 col-lg-3">
+                            <a href="{{ url_for('listar_tarefas', pasta_id=pasta.id) }}" class="folder-card" style="border-left-color: {{ pasta.cor }}">
+                                <div class="folder-icon" style="color: {{ pasta.cor }}">
+                                    {{ pasta.icone }}
+                                </div>
+                                <div class="folder-info">
+                                    <h6 class="mb-0">{{ pasta.nome }}</h6>
+                                    <small class="text-muted">{{ pasta.tarefas|length }} tarefas</small>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

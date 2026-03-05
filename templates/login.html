@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Login - To-Do Pro{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <i class="fas fa-check-double"></i>
+            </div>
+            <h2>Bem-vindo de volta!</h2>
+            <p class="text-muted">Faça login para acessar suas tarefas</p>
+        </div>
+        
+        <form method="POST" class="auth-form">
+            <div class="mb-3">
+                <label for="username" class="form-label">Nome de usuário</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" id="username" name="username" required autofocus>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label for="senha" class="form-label">Senha</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" class="form-control" id="senha" name="senha" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100 btn-lg">
+                <i class="fas fa-sign-in-alt me-2"></i>Entrar
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Não tem uma conta? <a href="{{ url_for('cadastro') }}">Cadastre-se</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

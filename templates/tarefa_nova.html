@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Tarefa - To-Do Pro{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-transparent">
+                    <h4 class="mb-0">
+                        <i class="fas fa-plus-circle text-primary me-2"></i>Nova Tarefa
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <!-- Título -->
+                        <div class="mb-4">
+                            <label for="titulo" class="form-label fw-bold">Título da Tarefa *</label>
+                            <input type="text" class="form-control form-control-lg" id="titulo" name="titulo" 
+                                   placeholder="O que você precisa fazer?" required>
+                        </div>
+                        
+                        <!-- Descrição -->
+                        <div class="mb-4">
+                            <label for="descricao" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="descricao" name="descricao" rows="4"
+                                      placeholder="Adicione mais detalhes sobre esta tarefa..."></textarea>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <!-- Pasta -->
+                            <div class="col-md-6">
+                                <label for="pasta_id" class="form-label">Pasta</label>
+                                <select class="form-select" id="pasta_id" name="pasta_id">
+                                    <option value="">Sem pasta (Geral)</option>
+                                    {% for pasta in pastas %}
+                                    <option value="{{ pasta.id }}">
+                                        {{ pasta.icone }} {{ pasta.nome }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <!-- Prioridade -->
+                            <div class="col-md-6">
+                                <label for="prioridade" class="form-label">Prioridade</label>
+                                <select class="form-select" id="prioridade" name="prioridade">
+                                    <option value="baixa">📗 Baixa</option>
+                                    <option value="media" selected>📙 Média</option>
+                                    <option value="alta">📕 Alta</option>
+                                    <option value="urgente">🔥 Urgente</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Deadline -->
+                        <div class="mb-4 mt-3">
+                            <label class="form-label">Deadline (Data Limite)</label>
+                            <div class="row g-2">
+                                <div class="col-md-8">
+                                    <input type="date" class="form-control" id="deadline" name="deadline">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="time" class="form-control" id="deadline_hora" name="deadline_hora" value="23:59">
+                                </div>
+                            </div>
+                            <div class="form-text">Deixe em branco se não houver prazo</div>
+                        </div>
+                        
+                        <!-- Botões -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('listar_tarefas') }}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-check me-2"></i>Criar Tarefa
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

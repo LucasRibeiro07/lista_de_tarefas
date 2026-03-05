@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Pastas - To-Do Pro{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-folder-open me-2"></i>Minhas Pastas
+            </h1>
+            <p class="page-subtitle">Organize suas tarefas em pastas e categorias</p>
+        </div>
+        <div class="page-actions">
+            <a href="{{ url_for('nova_pasta') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>Nova Pasta
+            </a>
+        </div>
+    </div>
+
+    <!-- Lista de Pastas -->
+    <div class="row g-4">
+        {% for pasta in pastas %}
+        <div class="col-md-6 col-lg-4">
+            <div class="folder-card-large">
+                <div class="folder-header" style="background: linear-gradient(135deg, {{ pasta.cor }}20, {{ pasta.cor }}40); border-left: 4px solid {{ pasta.cor }};">
+                    <div class="folder-icon-large" style="color: {{ pasta.cor }}">
+                        {{ pasta.icone }}
+                    </div>
+                    <div class="folder-actions">
+                        <a href="{{ url_for('editar_pasta', id=pasta.id) }}" class="btn btn-sm btn-outline-light">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ url_for('excluir_pasta', id=pasta.id) }}" class="btn btn-sm btn-outline-light" onclick="return confirm('Excluir esta pasta? As tarefas serão movidas para Geral.')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="folder-body">
+                    <h5>{{ pasta.nome }}</h5>
+                    {% if pasta.descricao %}
+                    <p class="text-muted small mb-3">{{ pasta.descricao }}</p>
+                    {% endif %}
+                    
+                    <div class="folder-stats">
+                        <div class="stat">
+                            <span class="stat-value">{{ pasta.total_tarefas }}</span>
+                            <span class="stat-label">Total</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value text-warning">{{ pasta.tarefas_pendentes }}</span>
+                            <span class="stat-label">Pendentes</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('listar_tarefas', pasta_id=pasta.id) }}" class="btn btn-outline-primary w-100 mt-3">
+                        <i class="fas fa-eye me-2"></i>Ver Tarefas
+                    </a>
+                </div>
+                
+                <!-- Subpastas -->
+                {% if pasta.subpastas %}
+                <div class="folder-subfolders">
+                    <small class="text-muted">Subpastas:</small>
+                    <div class="d-flex flex-wrap gap-1 mt-1">
+                        {% for subpasta in pasta.subpastas %}
+                        <a href="{{ url_for('listar_tarefas', pasta_id=subpasta.id) }}" class="badge" style="background-color: {{ subpasta.cor }}20; color: {{ subpasta.cor }}">
+                            {{ subpasta.icone }} {{ subpasta.nome }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        <!-- Card de Nova Pasta -->
+        <div class="col-md-6 col-lg-4">
+            <a href="{{ url_for('nova_pasta') }}" class="folder-card-new">
+                <i class="fas fa-folder-plus fa-3x"></i>
+                <h5 class="mt-3">Criar Nova Pasta</h5>
+                <p class="text-muted mb-0">Organize suas tarefas</p>
+            </a>
+        </div>
+    </div>
+    
+    {% if not pastas %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
+            <h4>Nenhuma pasta criada ainda</h4>
+            <p class="text-muted">Crie pastas para organizar suas tarefas por categorias</p>
+            <a href="{{ url_for('nova_pasta') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Criar Primeira Pasta
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

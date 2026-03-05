@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro - To-Do Pro{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <i class="fas fa-check-double"></i>
+            </div>
+            <h2>Crie sua conta!</h2>
+            <p class="text-muted">Comece a organizar suas tarefas hoje</p>
+        </div>
+        
+        <form method="POST" class="auth-form">
+            <div class="mb-3">
+                <label for="nome_completo" class="form-label">Nome Completo</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                    <input type="text" class="form-control" id="nome_completo" name="nome_completo" required>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="username" class="form-label">Nome de usuário</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="form-text">Este será seu identificador único no sistema</div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label for="senha" class="form-label">Senha</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" class="form-control" id="senha" name="senha" required minlength="6">
+                </div>
+                <div class="form-text">Mínimo de 6 caracteres</div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100 btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Criar Conta
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Já tem uma conta? <a href="{{ url_for('login') }}">Faça login</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

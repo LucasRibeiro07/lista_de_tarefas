@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Tarefas - To-Do Pro{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-tasks me-2"></i>Minhas Tarefas
+            </h1>
+            <p class="page-subtitle">Gerencie todas as suas tarefas</p>
+        </div>
+        <div class="page-actions">
+            <a href="{{ url_for('nova_tarefa') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>Nova Tarefa
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Pasta</label>
+                    <select name="pasta_id" class="form-select">
+                        <option value="">Todas as Pastas</option>
+                        {% for pasta in pastas %}
+                        <option value="{{ pasta.id }}" {% if pasta_selecionada == pasta.id %}selected{% endif %}>
+                            {{ pasta.icone }} {{ pasta.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="em_progresso">Em Andamento</option>
+                        <option value="concluida">Concluída</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Prioridade</label>
+                    <select name="prioridade" class="form-select">
+                        <option value="">Todas</option>
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
+                        <option value="urgente">Urgente</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="fas fa-filter me-2"></i>Filtrar
+                    </button>
+                    <a href="{{ url_for('listar_tarefas') }}" class="btn btn-outline-secondary ms-2">
+                        <i class="fas fa-times me-1"></i>Limpar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de Tarefas -->
+    <div class="card">
+        <div class="card-body">
+            {% if tarefas %}
+            <div class="task-list">
+                {% for tarefa in tarefas %}
+                <div class="task-item task-item-{{ tarefa.prioridade }} {% if tarefa.status == 'concluida' %}task-concluida{% endif %}">
+                    <div class="task-check">
+                        {% if tarefa.status == 'concluida' %}
+                        <a href="{{ url_for('reativar_tarefa', id=tarefa.id) }}" class="btn btn-sm btn-success" title="Reativar">
+                            <i class="fas fa-check"></i>
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('concluir_tarefa', id=tarefa.id) }}" class="btn btn-sm btn-outline-success" title="Concluir">
+                            <i class="far fa-circle"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="task-content flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="mb-1 {% if tarefa.status == 'concluida' %}text-decoration-line-through text-muted{% endif %}">
+                                    {{ tarefa.titulo }}
+                                </h5>
+                                {% if tarefa.descricao %}
+                                <p class="mb-1 text-muted small">{{ tarefa.descricao[:100] }}{% if tarefa.descricao|length > 100 %}...{% endif %}</p>
+                                {% endif %}
+                            </div>
+                            <div class="task-badges">
+                                <span class="priority-badge priority-{{ tarefa.prioridade }}">
+                                    {{ tarefa.prioridade.title() }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="task-meta">
+                            {% if tarefa.pasta %}
+                            <span class="me-3">
+                                <i class="fas fa-folder" style="color: {{ tarefa.pasta.cor }}"></i>
+                                {{ tarefa.pasta.nome }}
+                            </span>
+                            {% endif %}
+                            
+                            <span class="status-badge status-{{ tarefa.status }}">
+                                {{ tarefa.status.replace('_', ' ').title() }}
+                            </span>
+                            
+                            {% if tarefa.deadline %}
+                            <span class="deadline-info {% if tarefa.tempo_restante and tarefa.tempo_restante.atrasada %}text-danger{% elif tarefa.tempo_restante and tarefa.tempo_restante.total_horas < 24 %}text-warning{% endif %}">
+                                <i class="fas fa-clock me-1"></i>
+                                {% if tarefa.tempo_restante %}
+                                    {% if tarefa.tempo_restante.atrasada %}
+                                    Atrasada há {{ tarefa.tempo_restante.dias }}d
+                                    {% elif tarefa.tempo_restante.dias > 0 %}
+                                    {{ tarefa.tempo_restante.dias }}d {{ tarefa.tempo_restante.horas }}h
+                                    {% else %}
+                                    {{ tarefa.tempo_restante.horas }}h {{ tarefa.tempo_restante.minutos }}m
+                                    {% endif %}
+                                {% else %}
+                                {{ tarefa.deadline.strftime('%d/%m/%Y %H:%M') }}
+                                {% endif %}
+                            </span>
+                            {% endif %}
+                            
+                            <span class="text-muted ms-3">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ tarefa.data_criacao.strftime('%d/%m/%Y') }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="task-actions">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('editar_tarefa', id=tarefa.id) }}">
+                                        <i class="fas fa-edit me-2"></i>Editar
+                                    </a>
+                                </li>
+                                {% if tarefa.status != 'concluida' %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('alterar_status', id=tarefa.id, status='em_progresso') }}">
+                                        <i class="fas fa-play me-2"></i>Mover para Em Andamento
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{{ url_for('excluir_tarefa', id=tarefa.id) }}" onclick="return confirm('Tem certeza que deseja excluir esta tarefa?')">
+                                        <i class="fas fa-trash me-2"></i>Excluir
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-clipboard-list fa-4x text-muted mb-3"></i>
+                <h4>Nenhuma tarefa encontrada</h4>
+                <p class="text-muted">Crie sua primeira tarefa para começar</p>
+                <a href="{{ url_for('nova_tarefa') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Criar Tarefa
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

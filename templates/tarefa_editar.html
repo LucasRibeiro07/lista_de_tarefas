@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Tarefa - To-Do Pro{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-transparent">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit text-primary me-2"></i>Editar Tarefa
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <!-- Título -->
+                        <div class="mb-4">
+                            <label for="titulo" class="form-label fw-bold">Título da Tarefa *</label>
+                            <input type="text" class="form-control form-control-lg" id="titulo" name="titulo" 
+                                   value="{{ tarefa.titulo }}" required>
+                        </div>
+                        
+                        <!-- Descrição -->
+                        <div class="mb-4">
+                            <label for="descricao" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="descricao" name="descricao" rows="4"
+                                      placeholder="Adicione mais detalhes sobre esta tarefa...">{{ tarefa.descricao or '' }}</textarea>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <!-- Pasta -->
+                            <div class="col-md-6">
+                                <label for="pasta_id" class="form-label">Pasta</label>
+                                <select class="form-select" id="pasta_id" name="pasta_id">
+                                    <option value="">Sem pasta (Geral)</option>
+                                    {% for pasta in pastas %}
+                                    <option value="{{ pasta.id }}" {% if tarefa.pasta_id == pasta.id %}selected{% endif %}>
+                                        {{ pasta.icone }} {{ pasta.nome }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <!-- Prioridade -->
+                            <div class="col-md-6">
+                                <label for="prioridade" class="form-label">Prioridade</label>
+                                <select class="form-select" id="prioridade" name="prioridade">
+                                    <option value="baixa" {% if tarefa.prioridade == 'baixa' %}selected{% endif %}>📗 Baixa</option>
+                                    <option value="media" {% if tarefa.prioridade == 'media' %}selected{% endif %}>📙 Média</option>
+                                    <option value="alta" {% if tarefa.prioridade == 'alta' %}selected{% endif %}>📕 Alta</option>
+                                    <option value="urgente" {% if tarefa.prioridade == 'urgente' %}selected{% endif %}>🔥 Urgente</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Deadline -->
+                        <div class="mb-4 mt-3">
+                            <label class="form-label">Deadline (Data Limite)</label>
+                            <div class="row g-2">
+                                <div class="col-md-8">
+                                    <input type="date" class="form-control" id="deadline" name="deadline" 
+                                           value="{{ tarefa.deadline.strftime('%Y-%m-%d') if tarefa.deadline else '' }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="time" class="form-control" id="deadline_hora" name="deadline_hora" 
+                                           value="{{ tarefa.deadline.strftime('%H:%M') if tarefa.deadline else '23:59' }}">
+                                </div>
+                            </div>
+                            <div class="form-text">Deixe em branco se não houver prazo</div>
+                        </div>
+                        
+                        <!-- Status Atual -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Status da Tarefa</label>
+                            <div class="row g-2">
+                                <div class="col-md-12">
+                                    <select class="form-select" id="status" name="status">
+                                        <option value="pendente" {% if tarefa.status == 'pendente' %}selected{% endif %}>
+                                            ⭕ Pendente
+                                        </option>
+                                        <option value="em_progresso" {% if tarefa.status == 'em_progresso' %}selected{% endif %}>
+                                            🔄 Em Andamento
+                                        </option>
+                                        <option value="concluida" {% if tarefa.status == 'concluida' %}selected{% endif %}>
+                                            ✅ Concluída
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            {% if tarefa.data_conclusao %}
+                            <small class="text-muted mt-2 d-block">
+                                <i class="fas fa-check-circle me-1"></i>
+                                Concluída em {{ tarefa.data_conclusao.strftime('%d/%m/%Y às %H:%M') }}
+                            </small>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Botões -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('listar_tarefas') }}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-save me-2"></i>Salvar
+                                </button>
+                                <a href="{{ url_for('excluir_tarefa', id=tarefa.id) }}" class="btn btn-danger btn-lg" 
+                                   onclick="return confirm('Tem certeza que deseja excluir esta tarefa?')">
+                                    <i class="fas fa-trash me-2"></i>Excluir
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

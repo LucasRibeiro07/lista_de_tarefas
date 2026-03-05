@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Pasta - To-Do Pro{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-transparent">
+                    <h4 class="mb-0">
+                        <i class="fas fa-folder-plus text-primary me-2"></i>Nova Pasta
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <!-- Nome -->
+                        <div class="mb-4">
+                            <label for="nome" class="form-label fw-bold">Nome da Pasta *</label>
+                            <input type="text" class="form-control form-control-lg" id="nome" name="nome" 
+                                   placeholder="Ex: Trabalho, Pessoal, Projetos" required>
+                        </div>
+                        
+                        <!-- Descrição -->
+                        <div class="mb-4">
+                            <label for="descricao" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="descricao" name="descricao" rows="2"
+                                      placeholder="O que você vai guardar nesta pasta?"></textarea>
+                        </div>
+                        
+                        <!-- Ícone -->
+                        <div class="mb-4">
+                            <label class="form-label">Ícone</label>
+                            <div class="icon-selector">
+                                {% set icones = ['📁', '📂', '💼', '🏠', '🎯', '📚', '💡', '🚀', '🎨', '⚙️', '❤️', '⭐', '🌟', '🔥', '💪', '🎮', '🎵', '📷', '✈️', '💰'] %}
+                                {% for icone in icones %}
+                                <label class="icon-option">
+                                    <input type="radio" name="icone" value="{{ icone }}" {% if loop.first %}checked{% endif %}>
+                                    <span class="icon-display">{{ icone }}</span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Cor -->
+                        <div class="mb-4">
+                            <label class="form-label">Cor</label>
+                            <div class="color-selector">
+                                {% set cores = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6', '#f97316', '#84cc16', '#06b6d4', '#6366f1'] %}
+                                {% for cor in cores %}
+                                <label class="color-option">
+                                    <input type="radio" name="cor" value="{{ cor }}" {% if loop.first %}checked{% endif %}>
+                                    <span class="color-display" style="background-color: {{ cor }}"></span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Pasta Pai (para subpastas) -->
+                        {% if pastas %}
+                        <div class="mb-4">
+                            <label for="pasta_pai_id" class="form-label">Pasta Pai</label>
+                            <select class="form-select" id="pasta_pai_id" name="pasta_pai_id">
+                                <option value="">Nenhuma (Pasta Raiz)</option>
+                                {% for pasta in pastas %}
+                                <option value="{{ pasta.id }}">
+                                    {{ pasta.icone }} {{ pasta.nome }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">Crie uma subpasta dentro de outra pasta</div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Botões -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('listar_pastas') }}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-check me-2"></i>Criar Pasta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

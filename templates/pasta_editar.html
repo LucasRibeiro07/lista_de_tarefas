@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Pasta - To-Do Pro{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-transparent">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit text-primary me-2"></i>Editar Pasta
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <!-- Nome -->
+                        <div class="mb-4">
+                            <label for="nome" class="form-label fw-bold">Nome da Pasta *</label>
+                            <input type="text" class="form-control form-control-lg" id="nome" name="nome" 
+                                   value="{{ pasta.nome }}" required>
+                        </div>
+                        
+                        <!-- Descrição -->
+                        <div class="mb-4">
+                            <label for="descricao" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="descricao" name="descricao" rows="2"
+                                      placeholder="O que você vai guardar nesta pasta?">{{ pasta.descricao or '' }}</textarea>
+                        </div>
+                        
+                        <!-- Ícone -->
+                        <div class="mb-4">
+                            <label class="form-label">Ícone</label>
+                            <div class="icon-selector">
+                                {% set icones = ['📁', '📂', '💼', '🏠', '🎯', '📚', '💡', '🚀', '🎨', '⚙️', '❤️', '⭐', '🌟', '🔥', '💪', '🎮', '🎵', '📷', '✈️', '💰'] %}
+                                {% for icone in icones %}
+                                <label class="icon-option">
+                                    <input type="radio" name="icone" value="{{ icone }}" {% if pasta.icone == icone %}checked{% endif %}>
+                                    <span class="icon-display">{{ icone }}</span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Cor -->
+                        <div class="mb-4">
+                            <label class="form-label">Cor</label>
+                            <div class="color-selector">
+                                {% set cores = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6', '#f97316', '#84cc16', '#06b6d4', '#6366f1'] %}
+                                {% for cor in cores %}
+                                <label class="color-option">
+                                    <input type="radio" name="cor" value="{{ cor }}" {% if pasta.cor == cor %}checked{% endif %}>
+                                    <span class="color-display" style="background-color: {{ cor }}"></span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Botões -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('listar_pastas') }}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-save me-2"></i>Salvar
+                                </button>
+                                <a href="{{ url_for('excluir_pasta', id=pasta.id) }}" class="btn btn-danger btn-lg" 
+                                   onclick="return confirm('Excluir esta pasta? As tarefas serão movidas para Geral.')">
+                                    <i class="fas fa-trash me-2"></i>Excluir
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
