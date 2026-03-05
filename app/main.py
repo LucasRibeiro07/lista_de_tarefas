@@ -20,7 +20,13 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 app = Flask(__name__,
             template_folder=os.path.join(BASE_DIR, 'templates'),
             static_folder=os.path.join(BASE_DIR, 'static'))
+
+# Configurações de sessão (importante para produção)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'sua-chave-secreta-aqui-mude-para-producao')
+app.config['SESSION_COOKIE_SECURE'] = False  # True em produção com HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # Sessão dura 7 dias
 
 # Configurar o caminho do banco de dados
 import os
@@ -237,7 +243,7 @@ def login():
         usuario = Usuario.query.filter_by(username=username).first()
         
         if usuario and check_password_hash(usuario.senha, senha):
-            login_user(usuario)
+            login_user(usuario, remember=True)
             return redirect(url_for('dashboard'))
         else:
             flash('Nome de usuário ou senha incorretos!', 'error')
