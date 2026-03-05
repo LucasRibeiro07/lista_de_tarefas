@@ -12,12 +12,5 @@ SQLAlchemy==2.0.23
 # Segurança
 Werkzeug==3.0.1
 
-# Bootstrap (via CDN no HTML)
-# Font Awesome (via CDN no HTML)
-# Google Fonts (via CDN no HTML)
-
-# Python-dotenv (opcional, para variáveis de ambiente)
+# Python-dotenv
 python-dotenv==1.0.0
-
-# Ranqueamento de cores para Priority
-# (já incluso no Python padrão)

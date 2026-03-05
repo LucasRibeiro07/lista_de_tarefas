@@ -14,7 +14,7 @@ from functools import wraps
 # ============== CONFIGURAÇÃO DA APLICAÇÃO ==============
 import os
 
-# Obter o diretório base do projeto
+# Obter o diretório base do projeto (pasta pai da pasta app)
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 app = Flask(__name__,
