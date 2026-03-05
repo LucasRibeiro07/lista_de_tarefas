@@ -20,8 +20,19 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 app = Flask(__name__,
             template_folder=os.path.join(BASE_DIR, 'templates'),
             static_folder=os.path.join(BASE_DIR, 'static'))
-app.config['SECRET_KEY'] = 'sua-chave-secreta-aqui-mude-para-producao'
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(BASE_DIR, "instance", "todolist.db")}'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'sua-chave-secreta-aqui-mude-para-producao')
+
+# Configurar o caminho do banco de dados
+import os
+db_path = os.environ.get('DATABASE_PATH')
+if db_path:
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_path
+else:
+    # Para desenvolvimento local
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    instance_dir = os.path.join(base_dir, 'instance')
+    os.makedirs(instance_dir, exist_ok=True)
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(instance_dir, "todolist.db")}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Configurações de tema (podem ser alteradas no settings)
@@ -577,21 +588,19 @@ def settings():
         # Atualizar senha se fornecida
         nova_senha = request.form.get('nova_senha')
         if nova_senha:
-            current_user.senha = generate_password_hash(nova_senha)
+            current_user.set_senha(nova_senha)
         
         # Atualizar configurações de tema
-        current_user.tema_escuro = 'tema_escuro' in request.form
-        current_user.notificacoes_email = 'notificacoes_email' in request.form
-        current_user.idioma = request.form.get('idioma', 'pt-BR')
+        current_user.modo_escuro = 'modo_escuro' in request.form
         
         # Atualizar cor do avatar
-        current_user.avatar_color = request.form.get('avatar_color', '#6366f1')
+        current_user.avatar_cor = request.form.get('avatar_cor', '#6366f1')
         
         # Atualizar emoji do avatar
         current_user.avatar_emoji = request.form.get('avatar_emoji', '👤')
         
         # Atualizar cor principal do tema
-        current_user.tema_cor_principal = request.form.get('tema_cor_principal', '#6366f1')
+        current_user.tema_cor_principal = request.form.get('tema_cor', '#6366f1')
         
         db.session.commit()
         flash('Configurações salvas com sucesso!', 'success')
@@ -635,6 +644,10 @@ def init_db():
         print("Banco de dados criado com sucesso!")
 
 if __name__ == '__main__':
+    # Inicializar banco de dados
+    with app.app_context():
+        db.create_all()
+    
     # Production mode - usa a porta do ambiente (necessário para o Render)
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
