@@ -105,23 +105,11 @@
                         <div class="row g-4">
                             <!-- Cor do Tema (Painel) -->
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Cor do Painel/Tema</label>
+                                <label class="form-label fw-bold">Cor do Tema</label>
                                 <p class="text-muted small">Escolha a cor principal do sistema (navbar, botões, etc)</p>
                                 
-                                <!-- Cores Pre-definidas -->
-                                <label class="form-label small">Cores Pre-definidas</label>
-                                <div class="color-selector mb-3">
-                                    {% set cores_tema = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6', '#f97316', '#84cc16', '#0ea5e9', '#a855f7'] %}
-                                    {% for cor in cores_tema %}
-                                    <label class="color-option">
-                                        <input type="radio" name="tema_cor_principal" value="{{ cor }}" {% if current_user.tema_cor_principal == cor %}checked{% endif %} onclick="document.getElementById('tema_cor_input').value = this.value;">
-                                        <span class="color-display" style="background-color: {{ cor }}"></span>
-                                    </label>
-                                    {% endfor %}
-                                </div>
-                                
                                 <!-- Cor Personalizada -->
-                                <label class="form-label small">Escolha uma cor</label>
+                                <label class="form-label small">Selecione uma cor</label>
                                 <div class="d-flex align-items-center gap-2">
                                     <input type="color" class="form-control form-control-color" id="cor_tema_personalizada" 
                                            name="tema_cor_principal" 
