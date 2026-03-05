@@ -589,6 +589,15 @@ def excluir_pasta(id):
 def settings():
     """Página de configurações do usuário"""
     if request.method == 'POST':
+        # Debug: imprimir valores recebidos
+        print("=== DEBUG SETTINGS ===")
+        print(f"tema_cor_principal: {request.form.get('tema_cor_principal')}")
+        print(f"avatar_color: {request.form.get('avatar_color')}")
+        print(f"avatar_emoji: {request.form.get('avatar_emoji')}")
+        print(f"tema_escuro: {request.form.get('tema_escuro')}")
+        print(f"idioma: {request.form.get('idioma')}")
+        print("=======================")
+        
         # Atualizar informações do perfil
         current_user.nome_completo = request.form.get('nome_completo')
         current_user.email = request.form.get('email')
@@ -614,7 +623,13 @@ def settings():
         current_user.avatar_emoji = request.form.get('avatar_emoji', '👤')
         
         # Atualizar cor principal do tema (template envia 'tema_cor_principal')
-        current_user.tema_cor_principal = request.form.get('tema_cor_principal', '#6366f1')
+        tema_cor = request.form.get('tema_cor_principal')
+        if tema_cor:
+            current_user.tema_cor_principal = tema_cor
+        else:
+            current_user.tema_cor_principal = '#6366f1'
+        
+        print(f"Salvo: tema_cor_principal = {current_user.tema_cor_principal}")
         
         db.session.commit()
         flash('Configurações salvas com sucesso!', 'success')
