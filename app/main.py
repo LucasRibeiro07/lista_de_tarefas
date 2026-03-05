@@ -591,16 +591,22 @@ def settings():
             current_user.senha = generate_password_hash(nova_senha)
         
         # Atualizar configurações de tema
-        current_user.tema_escuro = 'modo_escuro' in request.form
+        current_user.tema_escuro = 'tema_escuro' in request.form
         
-        # Atualizar cor do avatar
-        current_user.avatar_color = request.form.get('avatar_cor', '#6366f1')
+        # Atualizar idioma
+        current_user.idioma = request.form.get('idioma', 'pt-BR')
+        
+        # Atualizar notificações
+        current_user.notificacoes_email = 'notificacoes_email' in request.form
+        
+        # Atualizar cor do avatar (template envia 'avatar_color')
+        current_user.avatar_color = request.form.get('avatar_color', '#6366f1')
         
         # Atualizar emoji do avatar
         current_user.avatar_emoji = request.form.get('avatar_emoji', '👤')
         
-        # Atualizar cor principal do tema
-        current_user.tema_cor_principal = request.form.get('tema_cor', '#6366f1')
+        # Atualizar cor principal do tema (template envia 'tema_cor_principal')
+        current_user.tema_cor_principal = request.form.get('tema_cor_principal', '#6366f1')
         
         db.session.commit()
         flash('Configurações salvas com sucesso!', 'success')

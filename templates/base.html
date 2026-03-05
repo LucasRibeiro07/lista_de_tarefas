@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         :root {
-            --primary: {% if current_user.is_authenticated %}{{ current_user.tema_cor_principal }}{% else %}#6366f1{% endif %};
+            --primary: {% if current_user.is_authenticated and current_user.tema_cor_principal %}{{ current_user.tema_cor_principal }}{% else %}#6366f1{% endif %};
             --secondary: {{ '#8b5cf6' }};
             --accent: {{ '#06b6d4' }};
             --dark: {{ '#1e293b' }};
